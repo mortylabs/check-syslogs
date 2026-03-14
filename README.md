@@ -53,6 +53,20 @@ No cloud dependency, no subscription — just a lightweight Python daemon runnin
 
 ---
 
+## 📸 Example Alerts
+
+When suspicious activity is detected, you receive an instant Telegram alert with the event type, log source, IP address, and a Google Maps geolocation image showing the attacker's location and ISP.
+
+**SSH login detected** — shows the connecting IP, username, and location:
+
+![SSH login alert](docs/alert_ssh_login.png)
+
+**Authentication failure** — brute force attempt trying common usernames:
+
+![Authentication failure alert](docs/alert_auth_failure.png)
+
+---
+
 ## 🚀 Quickstart
 
 ```bash
