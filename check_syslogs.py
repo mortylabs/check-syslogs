@@ -279,20 +279,28 @@ def lookup_ip_location(ip):
 
 
 def _do_ip_lookup(ip):
+    try:
+        # Resolve private IPs to external IP before cache lookup
+        if ip.startswith(("localhost", "127.0.0.1", "192.168.", "10.")):
+            ip = get_external_ip()
+            if not ip:
+                return
+
+    except Exception as e:
+        log_error_and_send_telegram(f"IP resolution failed: {e}")
+        return
+
+    # Check cache on resolved IP — suppresses duplicate maps within 30 seconds
     if ip in _ip_cache:
         cached = _ip_cache[ip]
         if isinstance(cached, dict):
             now = time()
             if now - cached.get('last_sent', 0) < 30:
-                return  # suppress duplicate within 30 seconds
+                return
             cached['last_sent'] = now
             bot_sendPhoto(('a.jpg', urlopen(cached['static_img_url'])), cached['caption'])
         return
     try:
-        if ip.startswith(("localhost", "127.0.0.1", "192.168.", "10.")):
-            ip = get_external_ip()
-            if not ip:
-                return
 
         # Try ip-api.com first, fall back to ipinfo.io on failure
         coords, address, isp = None, None, None
